@@ -1,0 +1,24 @@
+<ejs-grid [dataSource]='tableData' [allowGrouping]="true" [groupSettings]="groupOptions">
+    <e-columns>
+        <e-column field='OrderID' headerText='Order ID' textAlign='Right' width=90></e-column>
+        <e-column field='CustomerID' headerText='Customer ID' width=120></e-column>
+        <e-column field='Freight' headerText='Freight' textAlign='Right' format='C2' width=90></e-column>
+        <e-column field='OrderDate' headerText='Order Date' textAlign='Right' format='yMd' width=120></e-column>
+    </e-columns>
+</ejs-grid>
+
+<!-- <table>
+    <tr>
+        <td><label>OrderID</label></td>
+        <td><label>CustomerID</label></td>
+        <td><label>ShipName</label></td>
+        <td><label>ShipCity</label></td>
+    </tr>
+    <tr *ngFor="let data of tableData">
+        <th>{{data.OrderID}}</th>
+        <th>{{data.CustomerID}}</th>
+        <th>{{data.ShipName}}</th>
+        <th>{{data.ShipCity}}</th>
+    </tr>
+</table> -->
+<!-- <ag-grid-angular style="width: 100%; height: 100%;" class="ag-theme-alpine" [columnDefs]="columnDefs" [defaultColDef]="defaultColDef" [groupDisplayType]="groupDisplayType" [animateRows]="true" [rowData]="rowData" (gridReady)="onGridReady($event)"></ag-grid-angular> -->
