@@ -20,11 +20,10 @@ export class Group {
 export class AppComponent {
   title = 'advancedTable';
   public dataSource = new MatTableDataSource<any | Group>([]);
-  _alldata!: any[];
+  _allData!: any[];
   columns: any[];
   displayedColumns: string[];
   groupByColumns: string[] = [];
-  test: string[] = [];
 
   constructor(protected dataSourceService: DataService) {
     this.columns = [
@@ -45,25 +44,22 @@ export class AppComponent {
       },
     ];
     this.displayedColumns = this.columns.map((column) => column.field);
-    this.groupByColumns = ['brand', 'id', 'color'];
-    this.groupByColumns.forEach((element: any) => {
-      this.displayedColumns.forEach((e: any, index) => {
-        if (e == element) {
-          this.displayedColumns.splice(index, 1);
-        }
-      });
-    });
+    this.groupByColumns = ['brand', 'id'];
+    this.displayAbleColumns();
   }
 
   ngOnInit() {
+    /**
+     * getting data from service
+     */
     this.dataSourceService.getAllData().subscribe(
       (data: any) => {
         data.data.forEach((item: any, index: any) => {
           item.id = index + 1;
         });
-        this._alldata = data.data;
+        this._allData = data.data;
         this.dataSource.data = this.addGroups(
-          this._alldata,
+          this._allData,
           this.groupByColumns
         );
         this.dataSource.filterPredicate = this.customFilterPredicate.bind(this);
@@ -72,10 +68,20 @@ export class AppComponent {
       (err: any) => console.log(err)
     );
   }
-  customFilterPredicate(data: any | Group, filter: string): boolean {
+  /**
+   *
+   * @param data contains  a row
+   * @returns if data is instance of group we are calling its visible function otherwise we are calling
+   * getDataRowVisible
+   */
+  customFilterPredicate(data: any | Group): boolean {
     return data instanceof Group ? data.visible : this.getDataRowVisible(data);
   }
 
+  /**
+   * @param data contains a row
+   * @returns return boolean depends on parent visibilty true or false
+   */
   getDataRowVisible(data: any): boolean {
     const groupRows = this.dataSource.data.filter((row) => {
       if (!(row instanceof Group)) {
@@ -101,17 +107,33 @@ export class AppComponent {
     return parent.visible && parent.expanded;
   }
 
+  /**
+   * expend and unexpend the row and filter the dataSource
+   * @param row contains a particular row on which other data is dependent like brand
+   */
   groupHeaderClick(row: any) {
     row.expanded = !row.expanded;
     this.dataSource.filter = performance.now().toString();
   }
 
+  /**
+   * @param data all the data of table
+   * @param groupByColumns like brand, id etc
+   * @returns all the sub level groups like brand->id->color
+   */
   addGroups(data: any[], groupByColumns: string[]): any[] {
     const rootGroup = new Group();
     rootGroup.expanded = true;
     return this.getSublevel(data, 0, groupByColumns, rootGroup);
   }
-
+  /**
+   * its a recursive function
+   * @param data all data of table
+   * @param level current group by rows
+   * @param groupByColumns all the columns on which rows are hide or shown like brand,id and color
+   * @param parent parent like brand, id so brand is the parent of id
+   * @returns returns a result of group type on which all the levels are added to the data
+   */
   getSublevel(
     data: any[],
     level: number,
@@ -161,7 +183,62 @@ export class AppComponent {
     });
   }
 
+  /**
+   *
+   * @param index index of row in a table
+   * @param item complete row
+   * @returns returning the level of row like is it in brand or nested id and so on(1,2,....)
+   */
   isGroup(index: any, item: any): boolean {
     return item.level;
+  }
+
+  /**
+   * @param event gets the current menu clicked
+   * @param column current column to group like color
+   */
+
+  groupBy(event: any, column: any) {
+    event.stopPropagation();
+    this.checkGroupByColumn(column.field, true);
+    this.dataSource.data = this.addGroups(this._allData, this.groupByColumns);
+    this.dataSource.filter = performance.now().toString();
+    this.displayAbleColumns();
+  }
+
+  /**
+   * to check that field already exist in group or not.
+   * if not then add.
+   * @param field current field to group
+   * @param add boolean true because we want to add this field to goup
+   */
+  checkGroupByColumn(field: any, add: any) {
+    let found = null;
+    for (const column of this.groupByColumns) {
+      if (column === field) {
+        found = this.groupByColumns.indexOf(column, 0);
+      }
+    }
+    if (found != null && found >= 0) {
+      if (!add) {
+        this.groupByColumns.splice(found, 1);
+      }
+    } else {
+      if (add) {
+        this.groupByColumns.push(field);
+      }
+    }
+  }
+  /**
+   * excluding columns which are included in groupByColumns
+   */
+  displayAbleColumns() {
+    this.groupByColumns.forEach((element: any) => {
+      this.displayedColumns.forEach((e: any, index) => {
+        if (e == element) {
+          this.displayedColumns.splice(index, 1);
+        }
+      });
+    });
   }
 }
