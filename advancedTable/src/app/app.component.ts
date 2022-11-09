@@ -45,7 +45,7 @@ export class AppComponent {
       },
     ];
     this.displayedColumns = this.columns.map((column) => column.field);
-    this.groupByColumns = ['brand', 'id', 'year'];
+    this.groupByColumns = ['brand', 'id', 'color'];
     this.groupByColumns.forEach((element: any) => {
       this.displayedColumns.forEach((e: any, index) => {
         if (e == element) {
@@ -72,7 +72,6 @@ export class AppComponent {
       (err: any) => console.log(err)
     );
   }
-  // below is for grid row grouping
   customFilterPredicate(data: any | Group, filter: string): boolean {
     return data instanceof Group ? data.visible : this.getDataRowVisible(data);
   }
@@ -104,7 +103,7 @@ export class AppComponent {
 
   groupHeaderClick(row: any) {
     row.expanded = !row.expanded;
-    this.dataSource.filter = performance.now().toString(); // bug here need to fix
+    this.dataSource.filter = performance.now().toString();
   }
 
   addGroups(data: any[], groupByColumns: string[]): any[] {
