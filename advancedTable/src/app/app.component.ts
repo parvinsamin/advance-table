@@ -247,10 +247,13 @@ export class AppComponent {
   }
 
   dropTable(event: CdkDragDrop<any>) {
-    [this.groupByColumns[0], this.groupByColumns[1]] = [
-      this.groupByColumns[1],
-      this.groupByColumns[0],
-    ];
+    const prevIndex = this.dataSource.data.findIndex(
+      (d) => d === event.item.data
+    );
+    console.log(prevIndex);
+
+    [this.groupByColumns[prevIndex], this.groupByColumns[event.currentIndex]] =
+      [this.groupByColumns[event.currentIndex], this.groupByColumns[prevIndex]];
     this.dataSource.data = this.addGroups(this._allData, this.groupByColumns);
     this.dataSource.filter = performance.now().toString();
   }
