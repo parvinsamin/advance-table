@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { DataService } from 'src/services/data.service';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 export class Group {
   level = 0;
@@ -23,6 +24,7 @@ export class AppComponent {
   _allData!: any[];
   columns: any[];
   displayedColumns: string[];
+  test: string[] = [];
   groupByColumns: string[] = [];
 
   constructor(protected dataSourceService: DataService) {
@@ -44,7 +46,9 @@ export class AppComponent {
       },
     ];
     this.displayedColumns = this.columns.map((column) => column.field);
-    this.groupByColumns = ['brand', 'id'];
+    this.test = this.displayedColumns;
+    console.log(this.test);
+    this.groupByColumns = ['brand'];
     this.displayAbleColumns();
   }
 
@@ -240,5 +244,30 @@ export class AppComponent {
         }
       });
     });
+  }
+
+  dropTable(event: CdkDragDrop<any>) {
+    [this.groupByColumns[0], this.groupByColumns[1]] = [
+      this.groupByColumns[1],
+      this.groupByColumns[0],
+    ];
+    this.dataSource.data = this.addGroups(this._allData, this.groupByColumns);
+    this.dataSource.filter = performance.now().toString();
+  }
+
+  remove(col: string): void {
+    const index = this.groupByColumns.indexOf(col);
+    if (index >= 0) {
+      this.displayedColumns.push(col);
+      this.groupByColumns.splice(index, 1);
+      this.dataSource.data = this.addGroups(this._allData, this.groupByColumns);
+      this.dataSource.filter = performance.now().toString();
+    }
+  }
+
+  subClass(level: any) {
+    if (level == '2') return 'class2';
+    if (level == '3') return 'class3';
+    else return 'class1';
   }
 }

@@ -10,6 +10,8 @@ import { AgGridModule } from 'ag-grid-angular';
 import { MatTableModule } from '@angular/material/table';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { MatChipsModule } from '@angular/material/chips';
 import {
   PageService,
   SortService,
@@ -30,6 +32,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MatTableModule,
     MatMenuModule,
     MatIconModule,
+    DragDropModule,
+    MatChipsModule,
   ],
   providers: [PageService, SortService, FilterService, GroupService],
   bootstrap: [AppComponent],
